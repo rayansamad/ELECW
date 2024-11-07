@@ -23,6 +23,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationView;
+import android.content.Intent;
+import android.net.Uri;
+
 
 public class HelpFragment extends Fragment {
 
@@ -94,11 +97,11 @@ public class HelpFragment extends Fragment {
         String firstName = firstNameInput.getText().toString().trim();
         String lastName = lastNameInput.getText().toString().trim();
         String email = emailInput.getText().toString().trim();
-        String org = orgInput.getText().toString().trim();
-        String subject = subjectSpinner.getSelectedItem().toString(); // Get selected subject
+        String organization = orgInput.getText().toString().trim();
+        String selectedSubject = subjectSpinner.getSelectedItem().toString();
         String description = descriptionInput.getText().toString().trim();
 
-        // Validate the input fields
+        // Validate input fields
         if (TextUtils.isEmpty(firstName)) {
             Toast.makeText(getContext(), "Please enter your first name", Toast.LENGTH_SHORT).show();
             return;
@@ -116,23 +119,27 @@ public class HelpFragment extends Fragment {
             return;
         }
 
-        // Hide the keyboard
-        View view = getActivity().getCurrentFocus();
-        if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        // Compose email subject and body
+        String emailSubject = "Support Request: " + selectedSubject;
+        String emailBody = "First Name: " + firstName + "\n"
+                + "Last Name: " + lastName + "\n"
+                + "Email: " + email + "\n"
+                + "Organization: " + organization + "\n"
+                + "Subject: " + selectedSubject + "\n\n"
+                + "Description:\n" + description;
+
+        // Create email intent
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setType("message/rfc822"); // Set MIME type to email
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"clockit390@gmail.com"}); // Replace with your support email
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, emailSubject);
+        emailIntent.putExtra(Intent.EXTRA_TEXT, emailBody);
+
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Send email using..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(getContext(), "No email client installed", Toast.LENGTH_SHORT).show();
         }
-
-        // Simulate sending the support request (replace with actual logic if needed)
-        Toast.makeText(getContext(), "Support request submitted successfully!", Toast.LENGTH_LONG).show();
-
-        // Clear the fields after submission
-        firstNameInput.setText("");
-        lastNameInput.setText("");
-        emailInput.setText("");
-        orgInput.setText("");
-        subjectSpinner.setSelection(0); // Reset subject to default
-        descriptionInput.setText("");
     }
 
     private void loadFragment(Fragment fragment) {
