@@ -14,7 +14,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -43,7 +42,7 @@ public class CardAssignFragment extends Fragment {
 
         // Set up Toolbar and DrawerLayout
         Toolbar toolbar = view.findViewById(R.id.toolbar);
-        drawerLayout = view.findViewById(R.id.drawer_layout);
+        drawerLayout = view.findViewById(R.id.drawer_menu);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (activity != null) {
             activity.setSupportActionBar(toolbar);
