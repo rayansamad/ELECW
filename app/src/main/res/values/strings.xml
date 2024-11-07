@@ -36,5 +36,13 @@
         <item>SOCI</item>
         <item>STAT</item>
     </string-array>
+    <string-array name="support_options">
+        <item>General Inquiry</item>
+        <item>Technical Support</item>
+        <item>Account Issues</item>
+        <item>Billing</item>
+        <item>Feedback</item>
+        <item>Other</item>
+    </string-array>
 
 </resources>

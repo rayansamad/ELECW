@@ -61,7 +61,7 @@ public class AdminFragment extends Fragment {
 
         // Set up Toolbar and DrawerLayout
         Toolbar toolbar = view.findViewById(R.id.toolbar);
-        drawerLayout = view.findViewById(R.id.drawer_layout);
+        drawerLayout = view.findViewById(R.id.drawer_menu);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         if (activity != null) {
             activity.setSupportActionBar(toolbar);
