@@ -1,64 +1,146 @@
 package com.example.clockit;
 
+import android.content.Context;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HelpFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.material.navigation.NavigationView;
+
 public class HelpFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private DrawerLayout drawerLayout;
+    private EditText firstNameInput, lastNameInput, emailInput, orgInput, descriptionInput;
+    private Spinner subjectSpinner;
+    private Button submitButton;
 
     public HelpFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HelpFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HelpFragment newInstance(String param1, String param2) {
-        HelpFragment fragment = new HelpFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_help, container, false);
+
+        // Set up Toolbar and DrawerLayout
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
+        drawerLayout = view.findViewById(R.id.drawer_layout);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        if (activity != null) {
+            activity.setSupportActionBar(toolbar);
         }
+
+        // Set up drawer toggle
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                activity, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // Set up NavigationView
+        NavigationView navigationView = view.findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_home) {
+                loadFragment(new AdminFragment());
+            } else if (itemId == R.id.nav_participants) {
+                loadFragment(new ParticipantsFragment());
+            } else if (itemId == R.id.nav_announcements) {
+                loadFragment(new AnnouncmentsFragment());
+            } else if (itemId == R.id.nav_card_assign) {
+                loadFragment(new CardAssignFragment());
+            } else if (itemId == R.id.nav_add_classes) {
+                loadFragment(new AddClassesFragment());
+            } else if (itemId == R.id.nav_help) {
+                loadFragment(new HelpFragment());
+            }
+            drawerLayout.closeDrawer(GravityCompat.START);
+            return true;
+        });
+
+        // Initialize UI elements for the help form
+        firstNameInput = view.findViewById(R.id.firstNameInput);
+        lastNameInput = view.findViewById(R.id.lastNameInput);
+        emailInput = view.findViewById(R.id.emailInput);
+        orgInput = view.findViewById(R.id.orgInput);
+        subjectSpinner = view.findViewById(R.id.subjectSpinner);  // Subject dropdown (Spinner)
+        descriptionInput = view.findViewById(R.id.descriptionInput);
+        submitButton = view.findViewById(R.id.submitButton);
+
+        // Set up click listener for the Submit button
+        submitButton.setOnClickListener(v -> handleSubmit());
+
+        return view;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_help, container, false);
+    private void handleSubmit() {
+        String firstName = firstNameInput.getText().toString().trim();
+        String lastName = lastNameInput.getText().toString().trim();
+        String email = emailInput.getText().toString().trim();
+        String org = orgInput.getText().toString().trim();
+        String subject = subjectSpinner.getSelectedItem().toString(); // Get selected subject
+        String description = descriptionInput.getText().toString().trim();
+
+        // Validate the input fields
+        if (TextUtils.isEmpty(firstName)) {
+            Toast.makeText(getContext(), "Please enter your first name", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(lastName)) {
+            Toast.makeText(getContext(), "Please enter your last name", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(getContext(), "Please enter your email", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (TextUtils.isEmpty(description)) {
+            Toast.makeText(getContext(), "Please describe your issue", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Hide the keyboard
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+
+        // Simulate sending the support request (replace with actual logic if needed)
+        Toast.makeText(getContext(), "Support request submitted successfully!", Toast.LENGTH_LONG).show();
+
+        // Clear the fields after submission
+        firstNameInput.setText("");
+        lastNameInput.setText("");
+        emailInput.setText("");
+        orgInput.setText("");
+        subjectSpinner.setSelection(0); // Reset subject to default
+        descriptionInput.setText("");
+    }
+
+    private void loadFragment(Fragment fragment) {
+        if (getActivity() != null) {
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        }
     }
 }

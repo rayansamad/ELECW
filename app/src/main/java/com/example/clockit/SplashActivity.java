@@ -3,6 +3,7 @@ package com.example.clockit;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,26 +18,31 @@ public class SplashActivity extends AppCompatActivity {
 
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseReference;
+    private static final int SPLASH_DELAY = 3000; // 5 seconds delay
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.splash_activity); // Set the splash layout
 
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
 
-        if (currentUser != null) {
-            SharedPreferences prefs = getSharedPreferences("ClockItPrefs", MODE_PRIVATE);
-            String accountType = prefs.getString("accountType", null);
+        // Delay for 5 seconds before proceeding
+        new Handler().postDelayed(() -> {
+            if (currentUser != null) {
+                SharedPreferences prefs = getSharedPreferences("ClockItPrefs", MODE_PRIVATE);
+                String accountType = prefs.getString("accountType", null);
 
-            if (accountType != null) {
-                startMainActivity(accountType);
+                if (accountType != null) {
+                    startMainActivity(accountType);
+                } else {
+                    fetchAccountType(currentUser.getUid());
+                }
             } else {
-                fetchAccountType(currentUser.getUid());
+                startMainActivity(null);
             }
-        } else {
-            startMainActivity(null);
-        }
+        }, SPLASH_DELAY);
     }
 
     private void fetchAccountType(String userId) {
