@@ -28,7 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
-//LULLA
+
 public class AdminFragment extends Fragment {
     private TextView welcomeMessage, dateTime;
     private DatabaseReference databaseReference;
@@ -79,8 +79,8 @@ public class AdminFragment extends Fragment {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
                 loadFragment(new AdminFragment());
-            } else if (itemId == R.id.nav_participants) {
-                loadFragment(new ParticipantsFragment());
+            } else if (itemId == R.id.nav_students) { // Changed to nav_students
+                loadFragment(new StudentsFragment()); // Load StudentsFragment instead
             } else if (itemId == R.id.nav_announcements) {
                 loadFragment(new AnnouncmentsFragment());
             } else if (itemId == R.id.nav_card_assign) {
@@ -89,6 +89,10 @@ public class AdminFragment extends Fragment {
                 loadFragment(new AddClassesFragment());
             } else if (itemId == R.id.nav_help) {
                 loadFragment(new HelpFragment());
+            } else if (itemId == R.id.nav_logout) { // Handle logout
+                firebaseAuth.signOut();
+                loadFragment(new LoginFragment());
+                Toast.makeText(getContext(), "Logged out successfully.", Toast.LENGTH_SHORT).show();
             }
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;

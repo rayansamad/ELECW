@@ -22,7 +22,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterFragment extends Fragment {
 
-    private EditText emailField, usernameField, passwordField, confirmPasswordField;
+    private EditText emailField, nameField, passwordField, confirmPasswordField;
+    private EditText studentIdField, cardUidField; // New fields
     private RadioGroup accountTypeRadioGroup;
     private Button signUpButton, logInButton;
     private FirebaseAuth firebaseAuth;
@@ -38,9 +39,11 @@ public class RegisterFragment extends Fragment {
 
         // Initialize fields and buttons
         emailField = view.findViewById(R.id.et_email);
-        usernameField = view.findViewById(R.id.et_username);
+        nameField = view.findViewById(R.id.et_fullname); // Use name instead of username
         passwordField = view.findViewById(R.id.et_password);
         confirmPasswordField = view.findViewById(R.id.et_confirm_password);
+        studentIdField = view.findViewById(R.id.et_student_id); // Initialize new fields
+        cardUidField = view.findViewById(R.id.et_card_uid);
         accountTypeRadioGroup = view.findViewById(R.id.accountTypeRadioGroup);
         signUpButton = view.findViewById(R.id.btn_login);
         logInButton = view.findViewById(R.id.logInButton);
@@ -52,11 +55,14 @@ public class RegisterFragment extends Fragment {
         // Handle sign-up logic
         signUpButton.setOnClickListener(v -> {
             String email = emailField.getText().toString().trim();
-            String username = usernameField.getText().toString().trim();
+            String name = nameField.getText().toString().trim(); // Capture name instead of username
             String password = passwordField.getText().toString().trim();
             String confirmPassword = confirmPasswordField.getText().toString().trim();
+            String studentId = studentIdField.getText().toString().trim();
+            String cardUid = cardUidField.getText().toString().trim();
 
-            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(username) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmPassword)) {
+            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(name) || TextUtils.isEmpty(password) ||
+                    TextUtils.isEmpty(confirmPassword) || TextUtils.isEmpty(studentId) || TextUtils.isEmpty(cardUid)) {
                 Toast.makeText(getContext(), "All fields are required", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -78,7 +84,7 @@ public class RegisterFragment extends Fragment {
                             Toast.makeText(getContext(), "Account created successfully!", Toast.LENGTH_SHORT).show();
 
                             FirebaseUser user = firebaseAuth.getCurrentUser();
-                            User userData = new User(username, email, accountType);
+                            User userData = new User(name, email, accountType, studentId, cardUid); // Use name
 
                             // Store user data in Firebase Realtime Database under the user's unique ID
                             databaseReference.child(user.getUid()).setValue(userData)

@@ -1,6 +1,7 @@
 package com.example.clockit;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -23,9 +24,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationView;
-import android.content.Intent;
-import android.net.Uri;
-
+import com.google.firebase.auth.FirebaseAuth;
 
 public class HelpFragment extends Fragment {
 
@@ -63,8 +62,8 @@ public class HelpFragment extends Fragment {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
                 loadFragment(new AdminFragment());
-            } else if (itemId == R.id.nav_participants) {
-                loadFragment(new ParticipantsFragment());
+            } else if (itemId == R.id.nav_students) { // Changed to nav_students
+                loadFragment(new StudentsFragment()); // Use StudentsFragment instead
             } else if (itemId == R.id.nav_announcements) {
                 loadFragment(new AnnouncmentsFragment());
             } else if (itemId == R.id.nav_card_assign) {
@@ -73,6 +72,10 @@ public class HelpFragment extends Fragment {
                 loadFragment(new AddClassesFragment());
             } else if (itemId == R.id.nav_help) {
                 loadFragment(new HelpFragment());
+            } else if (itemId == R.id.nav_logout) { // Handle logout
+                FirebaseAuth.getInstance().signOut();
+                loadFragment(new LoginFragment());
+                Toast.makeText(getContext(), "Logged out successfully.", Toast.LENGTH_SHORT).show();
             }
             drawerLayout.closeDrawer(GravityCompat.START);
             return true;
